@@ -23,7 +23,7 @@
             color: var(--text);
             overflow-x: hidden;
         }
-        
+
         .brand-container {
             position: fixed;
             right: 50%;
@@ -36,6 +36,7 @@
             cursor: pointer;
             z-index: 100;
         }
+        
         .logo-box { 
             width: 45px;
             height: 45px;
@@ -49,11 +50,13 @@
             font-size: 20px;
             box-shadow: 0 10px 20px rgba(0, 122, 255, 0.2);
         }
+        
         .brand-container h1 { font-size: 42px;
             margin: 0;
             font-weight: 800;
             letter-spacing: -1px;
         }
+        
         .search-wrapper { 
             position: fixed;
             right: 50%;
@@ -64,6 +67,7 @@
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 90;
         }
+        
         input[type='tel'] {
             width: 100%;
             padding: 22px;
@@ -77,23 +81,28 @@
             border: 2px solid transparent;
             transition: 0.3s;
         }
+        
         input[type='tel']:focus {
             border-color: var(--accent);
         }
+        
         body.is-searching .brand-container {
             right: 40px;
             top: 40px;
             transform: translate(0, -50%);
         }
+        
         body.is-searching .brand-container h1 {
             font-size: 24px;
         }
+        
         body.is-searching .search-wrapper {
             top: 40px;
             right: 50%;
             transform: translate(50%, -50%);
             max-width: 350px;
         }
+        
         .header-bg {
             position: fixed;
             top: 0;
@@ -106,9 +115,11 @@
             transition: 0.8s;
             z-index: 80;
         }
+        
         body.is-searching .header-bg {
             transform: translateY(0);
         }
+        
         #results-area {
             margin-top: 140px;
             padding: 20px;
@@ -120,12 +131,14 @@
             transition: 0.4s;
             pointer-events: none;
         }
+        
         body.is-searching #results-area {
             opacity: 1;
             transform: translateY(0);
             transition: 0.6s ease 0.4s;
             pointer-events: all;
         }
+        
         .results-header {
             width: 100%;
             max-width: 600px;
@@ -135,6 +148,7 @@
             margin-bottom: 30px;
             padding: 0 10px;
         }
+        
         .results-container {
             width: 100%;
             max-width: 600px;
@@ -142,6 +156,7 @@
             grid-template-columns: 1fr;
             gap: 15px;
         }
+        
         .cat-card {
             background: var(--glass);
             backdrop-filter: blur(15px);
@@ -154,18 +169,22 @@
             border: 1px solid rgba(255,255,255,0.5);
             transition: 0.3s;
         }
+        
         body.edit-mode .cat-card {
             cursor: pointer;
             background: #fff;
         }
+        
         body.edit-mode .cat-card.active {
             border-color: var(--accent);
             box-shadow: 0 10px 20px rgba(0,122,255,0.1);
         }
+        
         .cat-name {
             font-weight: 600;
             font-size: 19px;
         }
+        
         .custom-toggle {
             width: 50px;
             height: 28px;
@@ -175,9 +194,11 @@
             transition: 0.4s;
             display: none;
         }
+        
         body.edit-mode .custom-toggle {
             display: block;
         }
+        
         .custom-toggle::after {
             content: '';
             position: absolute;
@@ -189,12 +210,15 @@
             border-radius: 50%;
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        
         .active .custom-toggle {
             background: var(--success);
         }
+        
         .active .custom-toggle::after {
             right: 25px;
         }
+        
         .btn {
             padding: 12px 28px;
             border-radius: 15px;
@@ -204,11 +228,13 @@
             transition: 0.3s;
             font-family: 'Assistant', sans-serif;
         }
+        
         .btn-edit {
             background: white;
             color: var(--accent);
             border: 2px solid var(--accent);
         }
+        
         .save-container {
             position: fixed;
             bottom: -100px;
@@ -222,19 +248,23 @@
             transition: 0.5s;
             z-index: 200;
         }
+        
         body.edit-mode .save-container {
             bottom: 0;
         }
+        
         .btn-save {
             background: var(--accent);
             color: white;
             width: 300px;
             font-size: 18px;
         }
+        
         .btn-save:disabled {
             background: #ccc;
             cursor: not-allowed;
         }
+        
         .not-found-container {
             text-align: center;
             background: white;
@@ -244,6 +274,7 @@
             max-width: 400px;
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        
         .icon-box-404 {
             position: relative;
             width: 80px;
@@ -253,12 +284,14 @@
             align-items: center;
             justify-content: center;
         }
+        
         .icon-box-404 svg {
             width: 48px;
             height: 48px;
             fill: var(--text);
             z-index: 2;
         }
+        
         .search-orbit {
             position: absolute;
             inset: 0;
@@ -266,15 +299,18 @@
             border-radius: 50%;
             animation: spin 10s linear infinite;
         }
+        
         .not-found-container h1 {
             margin: 0 0 10px;
             color: var(--text);
         }
+        
         .not-found-container p {
             color: #86868b;
             line-height: 1.5;
             margin-bottom: 25px;
         }
+        
         .btn-retry {
             background: var(--text);
             color: white;
@@ -285,9 +321,11 @@
             cursor: pointer;
             transition: 0.2s;
         }
+        
         .btn-retry:hover {
             transform: scale(1.05);
         }
+        
         #perm-modal {
             position: fixed;
             inset: 0;
@@ -298,6 +336,7 @@
             justify-content: center;
             z-index: 1000;
         }
+        
         .modal-card {
             background: white;
             padding: 40px;
@@ -306,6 +345,7 @@
             max-width: 420px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.15);
         }
+
         #toast {
             position: fixed;
             top: 30px;
@@ -320,14 +360,17 @@
             z-index: 1100;
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
+
         #toast.show {
             transform: translateX(-50%) translateY(0);
         }
+
         @keyframes spin {
             100% { 
                 transform: rotate(360deg);
             }
         }
+
         @keyframes popIn {
             from { 
                 opacity: 0;
@@ -336,6 +379,97 @@
                 opacity: 1;
                 transform: scale(1);
             } 
+        }
+
+        details {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 25px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        details[open] {
+            background: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        }
+
+        /* The clickable header */
+        summary {
+            list-style: none; /* Removes default arrow in most browsers */
+            padding: 20px 25px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #86868b;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            outline: none;
+            user-select: none;
+        }
+
+        /* Custom arrow using pseudo-element */
+        summary::after {
+            content: '+'; /* Or use an SVG icon */
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        details[open] summary::after {
+            transform: rotate(45deg);
+            color: var(--accent);
+        }
+
+        /* Webkit fix to hide default arrow */
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        /* The container holding the grid cards inside the details */
+        .team-grid-container {
+            padding: 0 15px 20px 15px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            /* Animation for smooth entrance */
+            animation: slideDown 0.4s ease-out;
+        }
+
+        /* Small visual tweak for cards inside a team group */
+        .team-grid-container .cat-card {
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        body.edit-mode .cat-card.read-only {
+            cursor: not-allowed;
+            opacity: 0.4; /* Slightly more faded */
+            filter: grayscale(1);
+            pointer-events: none; /* Physically prevents clicking */
+            border-color: transparent;
+            box-shadow: none;
+        }
+
+        /* Ensure the active green still shows slightly if it's read-only but active */
+        body.edit-mode .cat-card.read-only.active {
+            filter: grayscale(0.7); /* Allow a tiny bit of color to show it was ON */
+            opacity: 0.6;
         }
 
     </style>
@@ -369,32 +503,54 @@
 </div>
 <script>
     // --- 1. Configuration & Initial Server State ---
+    // const CONFIG = {
+    //     canEdit: true, 
+    //     categories: [
+    //         { id: 1, name: 'זיהוי כספאם' },
+    //         { id: 2, name: 'ניתוב למנהל' },
+    //         { id: 3, name: 'מספר מאושר (White-list)' },
+    //         { id: 4, name: 'הקלטה אוטומטית' }
+    //     ],
+    //     lastUpdated: 10000000
+    // };
+
     const CONFIG = {
-        canEdit: true, 
-        categories: [
-            { id: 1, name: 'זיהוי כספאם' },
-            { id: 2, name: 'ניתוב למנהל' },
-            { id: 3, name: 'מספר מאושר (White-list)' },
-            { id: 4, name: 'הקלטה אוטומטית' }
-        ],
-        lastUpdated: 10000000
-    };
+        "team red": {
+            canEdit: false,
+            categories: [
+                { id: 1, name: 'categorie 1'},
+                { id: 2, name: 'categorie 2'},
+                { id: 3, name: 'categorie 3'}
+            ],
+            lastUpdated: 10000
+        },
+        "team blue": {
+            canEdit: true,
+            categories: [
+                { id: 4, name: 'categorie 4'},
+                { id: 5, name: 'categorie 5'},
+                { id: 6, name: 'categorie 6'}
+            ],
+            lastUpdated: 10000000000
+        }
+    }
+
 
     // DB Structure Update: Now storing Version numbers!
     // This represents the "Single Source of Truth" on the server
     const SERVER_DB_SOURCE = {
-        '0500000000': { active: [1, 3], version: 1 }, 
-        '0521234567': { active: [4], version: 5 },
-        '0549876543': { active: [1, 2, 4], version: 2 }
+        '1000': { active: [1, 3, 5], version: 1 }, 
+        '2000': { active: [4], version: 5 },
+        '3000': { active: [1, 2, 4], version: 2 }
     };
 
-    const validNumbers = ['1234'];
+    const validNumbers = ['1000', '2000', '3000', '4000'];
 
     // --- 2. Cache Management System ---
-    
+
     (async function initApp() {
         const input = document.getElementById('phoneInput');
-        
+
         input.addEventListener('keypress', (e) => {
             if(e.key === 'Enter') handleSearch();
         });
@@ -496,7 +652,7 @@
                 serverRecord.active = newLogics;
                 serverRecord.version++; // Increment Version
                 resolve({ success: true, newVersion: serverRecord.version });                 
-                
+
             }, 800);
         });
     }
@@ -514,12 +670,12 @@
     function handleSearch() {
         const input = document.getElementById('phoneInput');
         const rawValue = input.value.replace(/-/g, ''); 
-        
+
         if (rawValue.length < 3) return;
 
         currentState.searching = true;
         currentState.currentNumber = rawValue;
-        
+
         const cachedDB = getFromCache();
         // Check if number exists AND has the correct structure
         if (validNumbers.includes(rawValue) || (cachedDB.hasOwnProperty(rawValue) && cachedDB[rawValue].active)) {
@@ -569,52 +725,125 @@
         `;
     }
 
+    // A simple Set to track which teams the user has opened manually
+    let openTeams = new Set();
+
     function renderGrid() {
         const grid = document.getElementById('catGrid');
-        if(!grid) return;
+        if (!grid) return;
+
+        // STEP 1: Capture which teams are currently open before wiping the HTML
+        const currentlyOpen = grid.querySelectorAll('details[open] summary');
+        currentlyOpen.forEach(s => openTeams.add(s.textContent));
 
         grid.innerHTML = '';
-        CONFIG.categories.forEach(cat => {
-            const isActive = currentState.activeLogics.includes(cat.id);
-            if (!currentState.editing && !isActive) return;
 
-            const item = document.createElement('div');
-            item.className = `cat-card ${isActive ? 'active' : ''}`;
-            if (currentState.editing) {
-                item.onclick = () => toggleCategory(cat.id);
+        for (const [teamName, teamData] of Object.entries(CONFIG)) {
+            
+            const detailsWrapper = document.createElement('details');
+            
+            // STEP 2: Restore the open state
+            if (openTeams.has(teamName)) {
+                detailsWrapper.open = true;
             }
-            item.innerHTML = `
-                <span class='cat-name'>${cat.name}</span>
-                <div class='custom-toggle'></div>
-            `;
-            grid.appendChild(item);
-        });
+
+            const summaryTag = document.createElement('summary');
+            summaryTag.textContent = teamName; 
+            
+            // Update our Set whenever the user clicks the summary
+            summaryTag.onclick = () => {
+                if (!detailsWrapper.open) openTeams.add(teamName);
+                else openTeams.delete(teamName);
+            };
+
+            detailsWrapper.appendChild(summaryTag);
+
+            const teamGridContainer = document.createElement('div');
+            teamGridContainer.className = 'team-grid-container'; 
+            
+            let hasVisibleCategories = false;
+
+            teamData.categories.forEach(cat => {
+                const isActive = currentState.activeLogics.includes(cat.id);
+                if (!currentState.editing && !isActive) return;
+
+                hasVisibleCategories = true;
+
+                const item = document.createElement('div');
+
+                // Reset classes every render
+                item.className = 'cat-card';
+                if (isActive) item.classList.add('active');
+
+                if (currentState.editing) {
+                    if (teamData.canEdit) {
+                        // This team IS editable - attach the click handler
+                        item.onclick = (e) => {
+                            e.stopPropagation();
+                            toggleCategory(cat.id, teamName);
+                        };
+                    } else {
+                        // This team IS NOT editable - apply the restricted style
+                        item.classList.add('read-only');
+                    }
+                }
+
+                item.innerHTML = `
+                    <span class='cat-name'>${cat.name}</span>
+                    <div class='custom-toggle'></div>
+                `;
+                teamGridContainer.appendChild(item);
+            });
+
+            if (hasVisibleCategories) {
+                detailsWrapper.appendChild(teamGridContainer);
+                grid.appendChild(detailsWrapper);
+            }
+        }
     }
 
     function toggleEditMode() {
-        if (!CONFIG.canEdit) {
+        // 1. Check if at least one team allows editing
+        const hasAnyPermission = Object.values(CONFIG).some(team => team.canEdit === true);
+
+        if (!hasAnyPermission) {
             document.getElementById('perm-modal').style.display = 'flex';
             return;
         }
+
+        // 2. Toggle the global editing state
         currentState.editing = !currentState.editing;
         document.body.classList.toggle('edit-mode', currentState.editing);
-        
-        const btn = document.getElementById('editBtn');
-        if(btn) btn.innerText = currentState.editing ? 'ביטול' : 'עריכת לוגיקה';
 
+        // 3. Update the UI button text
+        const btn = document.getElementById('editBtn');
+        if (btn) {
+            btn.innerText = currentState.editing ? 'ביטול' : 'עריכת לוגיקה';
+        }
+
+        // 4. If canceling, revert to the last saved state from cache
         if (!currentState.editing) {
-            // Revert changes from cache if canceled
             const cachedDB = getFromCache();
             const record = cachedDB[currentState.currentNumber];
             currentState.activeLogics = record ? [...record.active] : [];
         }
+
+        // 5. Refresh the grid to apply changes (showing toggles, dimming non-editable teams, etc.)
         renderGrid();
     }
 
-    function toggleCategory(catId) {
-        const index = currentState.activeLogics.indexOf(catId);
-        if (index === -1) currentState.activeLogics.push(catId);
-        else currentState.activeLogics.splice(index, 1);
+    function toggleCategory(catId, teamName) {
+        // Double-check: does this team actually allow editing?
+        if (!CONFIG[teamName] || !CONFIG[teamName].canEdit) {
+            console.error("Unauthorized attempt to edit " + teamName);
+            return; 
+        }
+
+        if (currentState.activeLogics.includes(catId)) {
+            currentState.activeLogics = currentState.activeLogics.filter(i => i !== catId);
+        } else {
+            currentState.activeLogics.push(catId);
+        }
         renderGrid();
     }
 
@@ -633,11 +862,11 @@
 
     async function handleSaveAction() {
         const cachedDB = getFromCache();
-        
+
         // 1. Dirty Check (Client Side Optimization)
         const originalRecord = cachedDB[currentState.currentNumber];
         const originalLogics = originalRecord ? originalRecord.active : [];
-        
+
         if (arraysEqual(originalLogics, currentState.activeLogics)) {
             showToast('לא בוצעו שינויים'); 
             toggleEditMode();
@@ -664,7 +893,7 @@
                 version: response.newVersion
             };
             saveToCache(cachedDB);
-            
+
             // Update current state version
             currentState.dataVersion = response.newVersion;
 
@@ -677,11 +906,11 @@
             if (e.error === 'CONFLICT') {
                 showToast('שגיאה: מידע לא עדכני!');
                 alert('מישהו אחר ערך את המספר הזה בזמן שעבדת עליו. המערכת תרענן את הנתונים כעת.');
-                
+
                 // Force sync specific record from server response
                 cachedDB[currentState.currentNumber] = e.serverData;
                 saveToCache(cachedDB);
-                
+
                 // Update UI to show the NEW data from the other user
                 currentState.activeLogics = [...e.serverData.active];
                 currentState.dataVersion = e.serverData.version;
@@ -717,6 +946,7 @@
     function closeModal() {
         document.getElementById('perm-modal').style.display = 'none';
     }
+
     function showToast(msg) {
         const t = document.getElementById('toast');
         t.innerText = msg;
