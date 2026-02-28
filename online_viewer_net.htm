@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לוג'יקול | ניהול ניתובים</title>
+    <style>
+        /* --- CSS REMAINS EXACTLY THE SAME AS BEFORE --- */
+        :root {
+            --bg: #f8fafc;
+            --accent: #007aff;
+            --success: #34c759;
+            --danger: #ff3b30;
+            --text: #1d1d1f;
+            --glass: rgba(255, 255, 255, 0.7);
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: var(--bg);
+            font-family: 'Assistant', sans-serif;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+        
+        .brand-container {
+            position: fixed;
+            right: 50%;
+            top: 40%;
+            transform: translate(50%, -50%);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            z-index: 100;
+        }
+        .logo-box { 
+            width: 45px;
+            height: 45px;
+            background: var(--accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 20px;
+            box-shadow: 0 10px 20px rgba(0, 122, 255, 0.2);
+        }
+        .brand-container h1 { font-size: 42px;
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+        .search-wrapper { 
+            position: fixed;
+            right: 50%;
+            top: 52%;
+            transform: translate(50%, -50%);
+            width: 90%;
+            max-width: 500px;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 90;
+        }
+        input[type="tel"] {
+            width: 100%;
+            padding: 22px;
+            border-radius: 25px;
+            border: none;
+            background: #fff;
+            font-size: 20px;
+            outline: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            text-align: center;
+            border: 2px solid transparent;
+            transition: 0.3s;
+        }
+        input[type="tel"]:focus {
+            border-color: var(--accent);
+        }
+        body.is-searching .brand-container {
+            right: 40px;
+            top: 40px;
+            transform: translate(0, -50%);
+        }
+        body.is-searching .brand-container h1 {
+            font-size: 24px;
+        }
+        body.is-searching .search-wrapper {
+            top: 40px;
+            right: 50%;
+            transform: translate(50%, -50%);
+            max-width: 350px;
+        }
+        .header-bg {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 80px;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transform: translateY(-100%);
+            transition: 0.8s;
+            z-index: 80;
+        }
+        body.is-searching .header-bg {
+            transform: translateY(0);
+        }
+        #results-area {
+            margin-top: 140px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: 0.4s;
+            pointer-events: none;
+        }
+        body.is-searching #results-area {
+            opacity: 1;
+            transform: translateY(0);
+            transition: 0.6s ease 0.4s;
+            pointer-events: all;
+        }
+        .results-header {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+        .results-container {
+            width: 100%;
+            max-width: 600px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        .cat-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            padding: 20px 25px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: 0.3s;
+        }
+        body.edit-mode .cat-card {
+            cursor: pointer;
+            background: #fff;
+        }
+        body.edit-mode .cat-card.active {
+            border-color: var(--accent);
+            box-shadow: 0 10px 20px rgba(0,122,255,0.1);
+        }
+        .cat-name {
+            font-weight: 600;
+            font-size: 19px;
+        }
+        .custom-toggle {
+            width: 50px;
+            height: 28px;
+            background: #e9e9eb;
+            border-radius: 20px;
+            position: relative;
+            transition: 0.4s;
+            display: none;
+        }
+        body.edit-mode .custom-toggle {
+            display: block;
+        }
+        .custom-toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .active .custom-toggle {
+            background: var(--success);
+        }
+        .active .custom-toggle::after {
+            right: 25px;
+        }
+        .btn {
+            padding: 12px 28px;
+            border-radius: 15px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Assistant', sans-serif;
+        }
+        .btn-edit {
+            background: white;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+        }
+        .save-container {
+            position: fixed;
+            bottom: -100px;
+            left: 0;
+            width: 100%;
+            background: #fff;
+            padding: 25px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: center;
+            transition: 0.5s;
+            z-index: 200;
+        }
+        body.edit-mode .save-container {
+            bottom: 0;
+        }
+        .btn-save {
+            background: var(--accent);
+            color: white;
+            width: 300px;
+            font-size: 18px;
+        }
+        .btn-save:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .not-found-container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            max-width: 400px;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .icon-box-404 {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .icon-box-404 svg {
+            width: 48px;
+            height: 48px;
+            fill: var(--text);
+            z-index: 2;
+        }
+        .search-orbit {
+            position: absolute;
+            inset: 0;
+            border: 2px dashed #ddd;
+            border-radius: 50%;
+            animation: spin 10s linear infinite;
+        }
+        .not-found-container h1 {
+            margin: 0 0 10px;
+            color: var(--text);
+        }
+        .not-found-container p {
+            color: #86868b;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+        .btn-retry {
+            background: var(--text);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-retry:hover {
+            transform: scale(1.05);
+        }
+        #perm-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-card {
+            background: white;
+            padding: 40px;
+            border-radius: 35px;
+            text-align: center;
+            max-width: 420px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+        #toast {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            padding: 15px 40px;
+            border-radius: 50px;
+            background: var(--text);
+            color: white;
+            font-weight: 600;
+            transition: 0.6s;
+            z-index: 1100;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        @keyframes spin {
+            100% { 
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes popIn {
+            from { 
+                opacity: 0;
+                transform: scale(0.9);
+            } to { 
+                opacity: 1;
+                transform: scale(1);
+            } 
+        }
+
+    </style>
+</head>
+<body id="body">
+
+<div class="header-bg"></div>
+<div id="toast">העדכון נשמר</div>
+
+<div id="perm-modal">
+    <div class="modal-card">
+        <h2 style="color: var(--danger); margin-top:0">גישה מוגבלת</h2>
+        <p style="font-size: 18px;">אין לך הרשאות לערוך לוגיקה עבור מספר זה.</p>
+        <button class="tn bbtn-save" style="width:100%" onclick="closeModal()">הבנתי</button>
+    </div>
+</div>
+
+<div class="brand-container" onclick="goHome()">
+    <div class="logo-box">LC</div>
+    <h1>לוג'יקול</h1>
+</div>
+
+<div class="search-wrapper">
+    <input type="tel" id="phoneInput" placeholder="הקלידו מספר טלפון לחיפוש..." autocomplete="off">
+</div>
+
+<div id="results-area"></div>
+
+<div class="save-container">
+    <button class="btn btn-save" id="saveBtn" onclick="handleSaveAction()">שמור שינויים בשרת</button>
+</div>
+<script>
+    // --- 1. Configuration & Initial Server State ---
+    const CONFIG = {
+        canEdit: true, 
+        categories: [
+            { id: 1, name: "זיהוי כספאם" },
+            { id: 2, name: "ניתוב למנהל" },
+            { id: 3, name: "מספר מאושר (White-list)" },
+            { id: 4, name: "הקלטה אוטומטית" }
+        ],
+        lastUpdated: 10000000;
+    };
+
+    // DB Structure Update: Now storing Version numbers!
+    // This represents the "Single Source of Truth" on the server
+    const SERVER_DB_SOURCE = {
+        "0500000000": { active: [1, 3], version: 1 }, 
+        "0521234567": { active: [4], version: 5 },
+        "0549876543": { active: [1, 2, 4], version: 2 }
+    };
+
+    // --- 2. Cache Management System ---
+    
+    (async function initApp() {
+        const input = document.getElementById('phoneInput');
+        
+        input.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') handleSearch();
+        });
+
+        input.addEventListener('input', (e) => {
+            if (e.target.value === '') {
+                goHome();
+            }
+        });
+
+        document.addEventListener('visibiltychange', () -> {
+            if (!document.hidden) {
+                await handshakeDB();
+            }
+        })
+
+        // Initial Load Strategy:
+        // We still load from cache for speed, but ideally, we should 
+        // silently re-fetch in background to check for updates.
+        // For this demo, we'll keep the simple "load if empty" logic.
+        if (!localStorage.getItem('localPhoneDB')) {
+            await syncCacheWithServer();
+        }
+    })();
+
+    function getFromCache() {
+        return JSON.parse(localStorage.getItem('localPhoneDB') || '{}');
+    }
+
+    function saveToCache(data) {
+        localStorage.setItem('localPhoneDB', JSON.stringify(data));
+    }
+
+    async function handshakeDB(data) {
+        try:
+            const response = await fetch("ur...?last_response=${data['lastUpdated'}")
+
+        if (response.status_code == 409){
+            showToast('אנא הריצו את הדאשבורד מחדש, אינכם רואים בגרסה העדכנית')
+        }
+    }
+
+
+    async function syncCacheWithServer() {
+        console.log("System: Syncing with server...");
+        const data = await mockServerFetch();
+        saveToCache(data);
+        console.log("System: Cache synced.");
+        return data;
+    }
+
+    // --- 3. Mock Server Interactions ---
+
+    function mockServerFetch() {
+        return new Promise(resolve => {
+            // Return a COPY to simulate network separation
+            setTimeout(() => resolve(JSON.parse(JSON.stringify(SERVER_DB_SOURCE))), 800);
+        });
+    }
+
+    // NEW: The Server Update Logic with Optimistic Locking
+    function mockServerUpdate(phoneNumber, newLogics, clientVersion) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                const serverRecord = SERVER_DB_SOURCE[phoneNumber];
+                
+                // Case 1: Record doesn't exist on server yet (New Number)
+                if (!serverRecord) {
+                    SERVER_DB_SOURCE[phoneNumber] = { active: newLogics, version: 1 };
+                    resolve({ success: true, newVersion: 1 });
+                    return;
+                }
+
+                // Case 2: CONFLICT CHECK (Optimistic Locking)
+                if (serverRecord.version !== clientVersion) {
+                    console.error(`Conflict! Server: v${serverRecord.version}, Client: v${clientVersion}`);
+                    reject({ error: "CONFLICT", serverData: serverRecord });
+                    return;
+                }
+
+                // Case 3: Success
+                serverRecord.active = newLogics;
+                serverRecord.version++; // Increment Version
+                resolve({ success: true, newVersion: serverRecord.version });
+
+            }, 800);
+        });
+    }
+
+    // --- 4. Application Logic ---
+
+    let currentState = {
+        searching: false,
+        editing: false,
+        currentNumber: null,
+        activeLogics: [],
+        dataVersion: 0 // We now track the version currently being viewed
+    };
+
+    function handleSearch() {
+        const input = document.getElementById('phoneInput');
+        const rawValue = input.value.replace(/-/g, ''); 
+        
+        if (rawValue.length < 3) return;
+
+        currentState.searching = true;
+        currentState.currentNumber = rawValue;
+        
+        const cachedDB = getFromCache();
+        
+        // Check if number exists AND has the correct structure
+        if (cachedDB.hasOwnProperty(rawValue) && cachedDB[rawValue].active) {
+            const record = cachedDB[rawValue];
+            currentState.activeLogics = [...record.active];
+            currentState.dataVersion = record.version || 1;
+            renderFoundState(input.value); 
+        } else {
+            // Either not found, or data was corrupted/old format
+            currentState.activeLogics = [];
+            currentState.dataVersion = 0; 
+            renderNotFoundState(input.value);
+        }
+
+        document.body.classList.add('is-searching');
+    }
+
+    function renderFoundState(displayNumber) {
+        const container = document.getElementById('results-area');
+        container.innerHTML = `
+            <div class="results-header">
+                <div>
+                    <h2 style="margin:0; font-size: 30px;">${displayNumber}</h2>
+                    <small style="color:#aaa; font-size:12px">גרסה ${currentState.dataVersion}</small>
+                </div>
+                <button class="btn btn-edit" id="editBtn" onclick="toggleEditMode()">עריכת לוגיקה</button>
+            </div>
+            <div class="results-container" id="catGrid"></div>
+        `;
+        renderGrid();
+    }
+
+    // ... (renderNotFoundState is same as before) ...
+    function renderNotFoundState(displayNumber) {
+        const container = document.getElementById('results-area');
+        container.innerHTML = `
+            <div class="not-found-container">
+                <div class="icon-box-404">
+                    <div class="search-orbit"></div>
+                    <svg viewBox="0 0 24 24"><path d="M19.36,10.04C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.04C2.34,8.36 0,10.91 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.36,10.04M19,18H6A4,4 0 0,1 2,14C2,11.95 3.53,10.24 5.56,10.03L6.63,9.92L7.13,8.97C8.08,7.14 9.94,6 12,6C14.62,6 16.88,7.86 17.39,10.43L17.69,11.93L19.22,12.04C20.78,12.14 22,13.45 22,15A3,3 0 0,1 19,18M8,13H10.55V10H13.45V13H16L12,17L8,13Z" /></svg>
+                </div>
+                <h1 style="font-size:32px;">המספר אינו קיים</h1>
+                <p>סרקנו את המאגר, אך המספר <strong>${displayNumber}</strong> לא נמצא.<br>הכל שקט בגזרה הזו.</p>
+                <button class="btn-retry" onclick="focusSearch()">נסו מספר אחר</button>
+            </div>
+        `;
+    }
+
+    function renderGrid() {
+        const grid = document.getElementById('catGrid');
+        if(!grid) return;
+
+        grid.innerHTML = '';
+        CONFIG.categories.forEach(cat => {
+            const isActive = currentState.activeLogics.includes(cat.id);
+            if (!currentState.editing && !isActive) return;
+
+            const item = document.createElement('div');
+            item.className = `cat-card ${isActive ? 'active' : ''}`;
+            if (currentState.editing) {
+                item.onclick = () => toggleCategory(cat.id);
+            }
+            item.innerHTML = `
+                <span class="cat-name">${cat.name}</span>
+                <div class="custom-toggle"></div>
+            `;
+            grid.appendChild(item);
+        });
+    }
+
+    function toggleEditMode() {
+        if (!CONFIG.canEdit) {
+            document.getElementById('perm-modal').style.display = 'flex';
+            return;
+        }
+        currentState.editing = !currentState.editing;
+        document.body.classList.toggle('edit-mode', currentState.editing);
+        
+        const btn = document.getElementById('editBtn');
+        if(btn) btn.innerText = currentState.editing ? "ביטול" : "עריכת לוגיקה";
+
+        if (!currentState.editing) {
+            // Revert changes from cache if canceled
+            const cachedDB = getFromCache();
+            const record = cachedDB[currentState.currentNumber];
+            currentState.activeLogics = record ? [...record.active] : [];
+        }
+        renderGrid();
+    }
+
+    function toggleCategory(catId) {
+        const index = currentState.activeLogics.indexOf(catId);
+        if (index === -1) currentState.activeLogics.push(catId);
+        else currentState.activeLogics.splice(index, 1);
+        renderGrid();
+    }
+
+    function focusSearch() {
+        const input = document.getElementById('phoneInput');
+        input.focus();
+        input.select();
+    }
+
+    function arraysEqual(arr1, arr2) {
+        if (arr1.length !== arr2.length) return false;
+        const sorted1 = [...arr1].sort();
+        const sorted2 = [...arr2].sort();
+        return JSON.stringify(sorted1) === JSON.stringify(sorted2);
+    }
+
+    async function handleSaveAction() {
+        const cachedDB = getFromCache();
+        
+        // 1. Dirty Check (Client Side Optimization)
+        const originalRecord = cachedDB[currentState.currentNumber];
+        const originalLogics = originalRecord ? originalRecord.active : [];
+        
+        if (arraysEqual(originalLogics, currentState.activeLogics)) {
+            showToast("לא בוצעו שינויים"); 
+            toggleEditMode();
+            return; 
+        }
+
+        const btn = document.getElementById('saveBtn');
+        btn.disabled = true;
+        btn.innerText = "מעדכן שרת...";
+
+        try {
+            // 2. SEND UPDATE WITH VERSION
+            // We pass the version we *think* is current (currentState.dataVersion)
+            const response = await mockServerUpdate(
+                currentState.currentNumber, 
+                currentState.activeLogics, 
+                currentState.dataVersion
+            );
+
+            // 3. Success Path
+            // Update local cache with new data AND new version from server
+            cachedDB[currentState.currentNumber] = {
+                active: [...currentState.activeLogics],
+                version: response.newVersion
+            };
+            saveToCache(cachedDB);
+            
+            // Update current state version
+            currentState.dataVersion = response.newVersion;
+
+            showToast("השינויים נשמרו בהצלחה!");
+            toggleEditMode();
+            renderFoundState(document.getElementById('phoneInput').value); // Re-render to show new version
+
+        } catch (e) {
+            // 4. CONFLICT PATH
+            if (e.error === "CONFLICT") {
+                showToast("שגיאה: מידע לא עדכני!");
+                alert("מישהו אחר ערך את המספר הזה בזמן שעבדת עליו. המערכת תרענן את הנתונים כעת.");
+                
+                // Force sync specific record from server response
+                cachedDB[currentState.currentNumber] = e.serverData;
+                saveToCache(cachedDB);
+                
+                // Update UI to show the NEW data from the other user
+                currentState.activeLogics = [...e.serverData.active];
+                currentState.dataVersion = e.serverData.version;
+                
+                toggleEditMode(); // Exit edit mode
+                renderFoundState(document.getElementById('phoneInput').value); // Show updated data
+            } else {
+                showToast("שגיאה כללית בשרת");
+                console.error(e);
+            }
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "שמור שינויים בשרת";
+        }
+    }
+
+    function goHome() {
+        const res = document.getElementById('results-area');
+        res.style.opacity = '0';
+        setTimeout(() => {
+            document.body.classList.remove('is-searching', 'edit-mode');
+            if(document.activeElement.id !== 'phoneInput') {
+                 document.getElementById('phoneInput').value = "";
+            }
+            currentState.searching = false;
+            currentState.editing = false;
+            currentState.currentNumber = null;
+            res.style.opacity = '';
+            res.innerHTML = '';
+        }, 300);
+    }
+
+    function closeModal() { document.getElementById('perm-modal').style.display = 'none'; }
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+</script>
+</body>
+</html>
