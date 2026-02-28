@@ -359,7 +359,7 @@
 </div>
 
 <div class='search-wrapper'>
-    <input type='tel' id='phoneInput' placeholder='...הקלידו מספר טלפון לחיפוש' autocomplete='off'>
+    <input type='tel' id='input' placeholder='...הקלידו מספר לחיפוש' autocomplete='off'>
 </div>
 
 <div id='results-area'></div>
@@ -383,17 +383,17 @@
     // DB Structure Update: Now storing Version numbers!
     // This represents the "Single Source of Truth" on the server
     const SERVER_DB_SOURCE = {
-        '0500000000': { active: [1, 3], version: 1 }, 
-        '0521234567': { active: [4], version: 5 },
-        '0549876543': { active: [1, 2, 4], version: 2 }
+        '1': { active: [1, 3], version: 1 }, 
+        '2': { active: [4], version: 5 },
+        '3': { active: [1, 2, 4], version: 2 }
     };
 
-    const validNumbers = ['1234'];
+    const validNumbers = ['1', '2', '3', '4'];
 
     // --- 2. Cache Management System ---
     
     (async function initApp() {
-        const input = document.getElementById('phoneInput');
+        const input = document.getElementById('input');
         
         input.addEventListener('keypress', (e) => {
             if(e.key === 'Enter') handleSearch();
@@ -427,11 +427,11 @@
     })();
 
     function getFromCache() {
-        return JSON.parse(localStorage.getItem('localPhoneDB') || '{}');
+        return JSON.parse(localStorage.getItem('DB') || '{}');
     }
 
     function saveToCache(data) {
-        localStorage.setItem('localPhoneDB', JSON.stringify(data));
+        localStorage.setItem('DB', JSON.stringify(data));
     }
 
     async function handshakeDB(data) {
@@ -449,7 +449,7 @@
 
     // --- 3. Mock Server Interactions ---
 
-    async function updateDB(phoneNumber, logics, version) {
+    async function updateDB(number, logics, version) {
         const url = '';
         var updateState;
 
@@ -471,21 +471,21 @@
         }
     }
 
-    function mockServerUpdate(phoneNumber, newLogics, clientVersion) {
+    function mockServerUpdate(number, newLogics, clientVersion) {
         return new Promise((resolve, reject) => {
             setTimeout(async () => {
-                const serverRecord = SERVER_DB_SOURCE[phoneNumber];
+                const serverRecord = SERVER_DB_SOURCE[number];
 
                 // Case 1: CONFLICT CHECK (Optimistic Locking)
                 if (serverRecord && serverRecord.version !== clientVersion) {
                     console.error(`Conflict! Server: v${serverRecord.version}, Client: v${clientVersion}`);
                     reject({ error: 'CONFLICT', serverData: serverRecord });
-                    showToast('אנא הרץ מחדש את הדאשבורד, בוצעו שנויים ללוגיקות של המסט מאז ');
+                    showToast('אנא הרץ מחדש את הדאשבורד ');
                     return;
                 }
 
-                // Case 2 + 3: adding/subtracting a logic to a new/old phone
-                const response = await updateDB(phoneNumber, newLogics, clientVersion + 1);
+                // Case 2 + 3: adding/subtracting a logic to a new/old number
+                const response = await updateDB(number, newLogics, clientVersion + 1);
                 if (!response){
                     reject({ error: 'POST FAILED', serverData: serverRecord });
                     showToast('הלוגיקה לא התעדכנה, אנא תשלח את הבקשה פעם נוספת.');
@@ -512,7 +512,7 @@
     };
 
     function handleSearch() {
-        const input = document.getElementById('phoneInput');
+        const input = document.getElementById('input');
         const rawValue = input.value.replace(/-/g, ''); 
         
         if (rawValue.length < 3) return;
@@ -603,7 +603,7 @@
         if(btn) btn.innerText = currentState.editing ? 'ביטול' : 'עריכת לוגיקה';
 
         if (!currentState.editing) {
-            // Revert changes from cache if canceled
+            // Revert changes from cache if cancelled
             const cachedDB = getFromCache();
             const record = cachedDB[currentState.currentNumber];
             currentState.activeLogics = record ? [...record.active] : [];
@@ -619,7 +619,7 @@
     }
 
     function focusSearch() {
-        const input = document.getElementById('phoneInput');
+        const input = document.getElementById('input');
         input.focus();
         input.select();
     }
@@ -634,7 +634,7 @@
     async function handleSaveAction() {
         const cachedDB = getFromCache();
         
-        // 1. Dirty Check (Client Side Optimization)
+        // 1. Dirty Check (Client Side Optimisation)
         const originalRecord = cachedDB[currentState.currentNumber];
         const originalLogics = originalRecord ? originalRecord.active : [];
         
@@ -670,7 +670,7 @@
 
             showToast('השינויים נשמרו בהצלחה!');
             toggleEditMode();
-            renderFoundState(document.getElementById('phoneInput').value); // Re-render to show new version
+            renderFoundState(document.getElementById('input').value); // Re-render to show new version
 
         } catch (e) {
             // 4. CONFLICT PATH
@@ -687,7 +687,7 @@
                 currentState.dataVersion = e.serverData.version;
 
                 toggleEditMode(); // Exit edit mode                
-                renderFoundState(document.getElementById('phoneInput').value); // Show updated data
+                renderFoundState(document.getElementById('input').value); // Show updated data
             } else {
                 showToast('שגיאה כללית בשרת');
                 console.error(e);
@@ -703,8 +703,8 @@
         res.style.opacity = '0';
         setTimeout(() => {
             document.body.classList.remove('is-searching', 'edit-mode');
-            if(document.activeElement.id !== 'phoneInput') {
-                 document.getElementById('phoneInput').value = '';
+            if(document.activeElement.id !== 'input') {
+                 document.getElementById('input').value = '';
             }
             currentState.searching = false;
             currentState.editing = false;
