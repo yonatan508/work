@@ -359,7 +359,7 @@
 </div>
 
 <div class='search-wrapper'>
-    <input type='tel' id='phoneInput' placeholder='הקלידו מספר טלפון לחיפוש...' autocomplete='off'>
+    <input type='tel' id='phoneInput' placeholder='...הקלידו מספר טלפון לחיפוש' autocomplete='off'>
 </div>
 
 <div id='results-area'></div>
@@ -388,6 +388,8 @@
         '0549876543': { active: [1, 2, 4], version: 2 }
     };
 
+    const validNumbers = ['1234'];
+
     // --- 2. Cache Management System ---
     
     (async function initApp() {
@@ -402,6 +404,8 @@
                 goHome();
             }
         });
+
+        saveToCache(SERVER_DB_SOURCE);
 
         document.addEventListener('visibilitychange', async () => {
             if (!document.hidden) {
@@ -457,6 +461,7 @@
 
         try {
             const response = await fetch(url, options);
+            console.log(response);
             updateState = response.ok;
         } catch (error) {
             console.log(error);
@@ -470,22 +475,16 @@
         return new Promise((resolve, reject) => {
             setTimeout(async () => {
                 const serverRecord = SERVER_DB_SOURCE[phoneNumber];
-                
-                // Case 1: Record doesn't exist on server yet (New Number)
-                if (!serverRecord) {
-                    SERVER_DB_SOURCE[phoneNumber] = { active: newLogics, version: 1 };
-                    resolve({ success: true, newVersion: 1 });
-                    return;
-                }
 
-                // Case 2: CONFLICT CHECK (Optimistic Locking)
-                if (serverRecord.version !== clientVersion) {
+                // Case 1: CONFLICT CHECK (Optimistic Locking)
+                if (serverRecord && serverRecord.version !== clientVersion) {
                     console.error(`Conflict! Server: v${serverRecord.version}, Client: v${clientVersion}`);
                     reject({ error: 'CONFLICT', serverData: serverRecord });
                     showToast('אנא הרץ מחדש את הדאשבורד, בוצעו שנויים ללוגיקות של המסט מאז ');
                     return;
                 }
 
+                // Case 2 + 3: adding/subtracting a logic to a new/old phone
                 const response = await updateDB(phoneNumber, newLogics, clientVersion + 1);
                 if (!response){
                     reject({ error: 'POST FAILED', serverData: serverRecord });
@@ -522,12 +521,12 @@
         currentState.currentNumber = rawValue;
         
         const cachedDB = getFromCache();
-        
         // Check if number exists AND has the correct structure
-        if (cachedDB.hasOwnProperty(rawValue) && cachedDB[rawValue].active) {
+        if (validNumbers.includes(rawValue) || (cachedDB.hasOwnProperty(rawValue) && cachedDB[rawValue].active)) {
             const record = cachedDB[rawValue];
-            currentState.activeLogics = [...record.active];
-            currentState.dataVersion = record.version || 1;
+
+            currentState.activeLogics = record? [...record.active]: [];
+            currentState.dataVersion = record? record.version || 1: 0;
             renderFoundState(input.value); 
         } else {
             // Either not found, or data was corrupted/old format
@@ -686,8 +685,8 @@
                 // Update UI to show the NEW data from the other user
                 currentState.activeLogics = [...e.serverData.active];
                 currentState.dataVersion = e.serverData.version;
-                
-                toggleEditMode(); // Exit edit mode
+
+                toggleEditMode(); // Exit edit mode                
                 renderFoundState(document.getElementById('phoneInput').value); // Show updated data
             } else {
                 showToast('שגיאה כללית בשרת');
